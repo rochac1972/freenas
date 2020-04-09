@@ -937,7 +937,8 @@ class DiskService(CRUDService):
                 else:
                     disk['disk_rotationrate'] = int(g.provider.config['rotationrate'])
                     disk['disk_type'] = 'HDD'
-            except ValueError:
+            except ValueError as e:
+                self.middleware.logger.debug('Unable to determine %s disk type/rotationrate: %s', name, str(e))
                 disk['disk_type'] = 'UNKNOWN'
                 disk['disk_rotationrate'] = None
             disk['disk_model'] = g.provider.config['descr'] or None
