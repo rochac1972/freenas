@@ -479,7 +479,7 @@ class VMSupervisor:
                     }
 
                 device_xml = device.xml(child_element=create_element('address', **address_dict))
-            elif isinstance(device, NIC):
+            elif isinstance(device, (NIC, VNC)):
                 device_xml = device.xml(slot=pci_slot())
             else:
                 device_xml = device.xml()
@@ -704,7 +704,9 @@ class VNC(Device):
 
     def xml(self, *args, **kwargs):
         return create_element(
-            'controller', type='usb', model='nec-xhci'
+            'controller', type='usb', model='nec-xhci', attribute_dict={
+                'children': [create_element('address', type='pci', slot=str(kwargs['slot']))]
+            }
         ), create_element('input', type='tablet', bus='usb')
 
     def bhyve_args(self, *args, **kwargs):
